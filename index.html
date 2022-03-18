@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{tumblr_text}}</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="">
+  <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
+  <script src="tumblr.js"></script>
+  <link rel="stylesheet" type="text/css" href="js_vue_tumblr.css">
+</head>
+
+<body>
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+  <div id="app">
+    <div id="control">
+      <input v-model="tumblr_text" placeholder="编辑我…… ">
+      <button v-on:click='updateImageList' type="button ">更新图片内容</button>
+      <br><br>
+      <button v-on:click='nextPage' type="button ">{{images_name_l[count_index]}}</button>
+      <button v-on:click='nextPageNo' type="button ">下一页</button>
+    </div>
+
+    <h2>{{info}}</h2>
+    <h2>{{tumblr_text}}</h2>
+    <img v-on:click="change " class="div1 " id="image_tumblr " v-bind:src="images ">
+    <br>
+    <div style="width:800px;height:100px;margin:0px auto;padding:0px;color:hsl(0, 0%, 0%) "></div>
+    <img class="div1 " v-for="(image) in images_l " :src='image.name' :key='image.score'>
+  </div>
+  <script>
+    let data = {
+      name: 'hello',
+      address: 'world',
+      images: 'https://66.media.tumblr.com/29f26944decdf86ed2ddb0fa268c01dd/1588a149c53ef008-f3/s1280x1920/6058ac5b223e604f2d719226f21994effc95bcf0.jpg',
+      info: null,
+      tumblr_text: 'alwaysgagher_json1.txt',
+      images_l: image_list,
+      images_name_l: tumblr_name_list,
+      count_index: 0,
+      page_nu: 0
+    }
+    var app = new Vue({
+      el: '#app',
+      data,
+      methods: {
+        change: function(event) {
+          data.images = this.images_l[Math.ceil(Math.random() * 50)]['name']
+        },
+        updateImageList: function(event) {
+          axios
+            .get('http://127.0.0.1:5000/tumblr/' + this.tumblr_text + '/' + this.page_nu)
+            .then(response => (this.images_l = response.data))
+        },
+        getAllList: function() {
+          axios
+            .get('http://127.0.0.1:5000/tumblr/list')
+            .then(response => (this.images_name_l = response.data))
+        },
+        nextPage: function(event) {
+          this.count_index = this.count_index + 1
+          this.page_nu = 0
+          this.tumblr_text = this.images_name_l[this.count_index]
+          console.log(this.tumblr_text)
+          this.updateImageList()
+        },
+        nextPageNo: function(event) {
+          this.page_nu = this.page_nu + 50
+          console.log('get _next page')
+          this.updateImageList()
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
