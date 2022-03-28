@@ -1,17 +1,26 @@
 body {
-  background-color: #d0e4fe;
+    background-color: #d0e4fe;
 }
 
 img {
-  width: 500px;
-  height: 400px;
-  padding: 5px
+    padding: 5px
 }
 
 #control {
-  position: fixed;
-  top: 30px;
-  right: 5px;
-  padding: 10px;
-  background-color: red;
+    position: fixed;
+    top: 30px;
+    right: 5px;
+    padding: 10px;
+    background-color: red;
+}
+
+.image_leg {
+    display: inline;
+    width: 500px;
+    height: 400px;
+}
+
+.btn {
+    margin: 5px;
+    width: 200px;
 }

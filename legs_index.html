@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{tumblr_text}}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
+    <script src="tumblr.js"></script>
+    <link rel="stylesheet" type="text/css" href="js_vue_tumblr.css">
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div id="app">
+        <div id="control">
+            <button v-on:click='nextPageNo' class='btn' type="button ">下一页 {{page_no}}</button> <br>
+
+            <button v-on:click='prePage' class='btn' type="button ">上一页 {{page_no}}</button><br>
+            <button v-on:click='cleanPage' class='btn' type="button ">清除数据 {{page_no}}</button>
+        </div>
+
+        <br>
+        <div class="image_leg" v-for="(image) in images_l">
+            <a :href="image.jpg">
+                <img :title='image.jpg' :src='image.jpg' alt="HTML tutorial" :key='image.number'></a>
+        </div>
+
+    </div>
+    <script>
+        class Legs_Image {
+            constructor(index) {
+                this.jpg = "https://legsworld.net/UpdatesNew/Previews-1212x1644/" + index + ".jpg"
+                this.number = index
+            }
+        }
+        let data = {
+            page_no: 0, //页码
+            images_l: []
+        }
+        Vue.config.devtools = true
+        var app = new Vue({
+            el: '#app',
+            data,
+
+            methods: {
+                cleanPage: function() {
+                    this.images_l.splice(0, 30)
+                },
+                prePage: function() {
+                    this.images_l.splice(0, 30)
+                    for (let i = 6622 - this.page_no * 30; i > 6622 - this.page_no * 30 - 30; i--) {
+                        this.images_l.push(new Legs_Image(i))
+                    }
+                    this.page_no = this.page_no + 1
+                    console.log(this.images_l)
+                },
+                nextPageNo: function() {
+                    this.images_l.splice(0, 30)
+                    for (let i = 6622 - this.page_no * 30; i > 6622 - this.page_no * 30 - 30; i--) {
+                        this.images_l.push(new Legs_Image(i))
+                    }
+                    this.page_no = this.page_no + 1
+                    console.log(this.images_l)
+                },
+                updateImageList: function(event) {
+                    if (this.tumblr_text === 'legsworld') {
+                        console.log('legsworld')
+                    } else {
+                        axios
+                            .get('http://127.0.0.1:5000/tumblr/' + this.tumblr_text + '/' + this.page_nu)
+                            .then(response => (this.images_l = response.data))
+                    }
+                },
+                mounted: function() {
+                    console.log(' mounted')
+                }
+
+            },
+        })
+    </script>
+</body>
+
+</html>

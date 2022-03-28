@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: aqua;
+        }
+        
+        ul {
+            list-style: none;
+            display: flex;
+        }
+        
+        .red {
+            background-color: aqua;
+        }
+        
+        .no {
+            visibility: hidden;
+        }
+        
+        button {
+            cursor: pointer;
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <ul v-for='(item,index) in yuansu'>
+            <li v-for='(items,indexs) in item' @click="search(index,indexs)">
+                <button :class="items.color">
+          <div>{
+   {items.id}}</div>
+          <div>{
+   {items.name}}</div>
+          <div>{
+   {items.conent}}</div>
+        </button>
+            </li>
+        </ul>
+    </div>
+    <script>
+        let vm = new Vue({
+            el: "#app",
+            data: {
+                yuansu: [
+                    [{
+                        id: '',
+                        color: 'no'
+                    }, {
+                        id: 1,
+                        color: 'row'
+                    }, {
+                        id: '',
+                        color: 'no'
+                    }, ],
+                    [{
+                        id: 1,
+                        name: '',
+                        color: 'row'
+                    }, {
+                        id: 1,
+                        name: 'H',
+                        conent: '123123',
+                        color: 'red'
+                    }, {
+                        id: '',
+                        name: '',
+                        color: 'no'
+                    }, {
+                        id: '',
+                        name: '',
+                        color: 'no'
+                    }, {
+                        id: '',
+                        name: '',
+                        color: 'no'
+                    }, {
+                        id: 15,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 16,
+                        name: 'H',
+                        color: 'red'
+                    }],
+                    [{
+                        id: 21,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 22,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 23,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 24,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 25,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 26,
+                        name: 'H',
+                        color: 'red'
+                    }],
+                    [{
+                        id: 31,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 32,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 33,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 34,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 35,
+                        name: 'H',
+                        color: 'red'
+                    }, {
+                        id: 36,
+                        name: 'H',
+                        color: 'red'
+                    }]
+                ]
+            },
+            methods: {
+                search(index, indexs) {
+                    // console.log(index,indexs)
+                    //点击按钮获取相应的id
+                    console.log(this.yuansu[index][indexs].id)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>使用javascript实现一个2048小游戏，js混合vue实现</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="2048.css">
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
+    <script src="move_2048.js"></script>
+</head>
+
+<body>
+    <div id="app" @keyup.down="key_down_2048" @keyup.up="key_up_2048" @keyup.left="key_left_2048" @keyup.right="key_right_2048" tabindex="1">
+        <div>
+            <h2 class="score_2048">{{score}}</h2>
+            <button @click="startNewGame">开始新游戏</button>
+            <button @click="text_method">测试功能使用</button><br>
+            <ul v-for="(items,index) in data_item_2048">
+                <span class="text_2048" :class="item.css_index" v-for="item in items">
+                    {{item.number}}
+                </span>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            score: 0,
+            // 所有值为0的位置保存在这个数组里。随机取一个设置为2或者4
+            data_zero: [],
+            data_item_2048: [],
+        },
+        methods: {
+            text_method() {
+                this.create2Or4()
+            },
+            gameOver() {
+                alert('gameOver')
+
+            },
+            startNewGame() {
+                this.data_item_2048 = new Array([4], [4], [4], [4])
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        this.data_item_2048[i][j] = new Item_2048(0)
+                    }
+                }
+                this.data_item_2048.push()
+                this.score = 0
+
+            },
+            // 在为0的地方创建一个2或者4
+            create2Or4() {
+                // 寻找为0的位置
+                this.data_zero = []
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        if (this.data_item_2048[i][j]['number'] === 0) {
+                            this.data_zero.push(i * 4 + j)
+                        }
+                    }
+                }
+                if (this.data_zero.length === 0) {
+                    this.gameOver()
+                    return
+                }
+                let index_2 = this.data_zero[Math.floor(Math.random() * this.data_zero.length)]
+                this.data_zero.splice(index_2, 1)
+                console.log(index_2)
+                let i = Math.floor(index_2 / 4),
+                    j = Math.floor(index_2 % 4),
+                    temp = 2
+                if (Math.random() * 5 > 4) {
+                    temp = 4
+                }
+                this.data_item_2048[i][j] = new Item_2048(temp)
+                this.data_item_2048.push()
+            },
+            initData() {
+                this.data_item_2048 = JSON.parse(localStorage.getItem("data_item_2048")) || []
+                if (this.data_item_2048.length < 1) {
+                    this.data_item_2048 = new Array([4], [4], [4], [4])
+                    for (let i = 0; i < 4; i++) {
+                        for (let j = 0; j < 4; j++) {
+                            this.data_item_2048[i][j] = new Item_2048(0)
+                        }
+                    }
+                }
+                this.score = Number(localStorage.getItem('score') || 0)
+            },
+            getScore(sum) {
+
+                this.score = sum + this.score
+            },
+            key_up_2048() {
+                console.log('up')
+                for (let i = 0; i < 4; i++) {
+                    let arr = new Array(4)
+                    for (let j = 0; j < 4; j++) {
+                        arr[j] = this.data_item_2048[j][i]['number']
+                    }
+                    let arr1 = new move_2048(arr, false).moveDown()
+                    for (let j = 0; j < 4; j++) {
+                        this.data_item_2048[j][i] = new Item_2048(arr1[j])
+                    }
+                    this.getScore(arr1[4])
+                    console.log('score', arr1[4])
+                }
+
+                this.create2Or4()
+            },
+            key_down_2048() {
+                console.log('down')
+                for (let i = 0; i < 4; i++) {
+                    let arr = new Array(4)
+                    for (let j = 0; j < 4; j++) {
+                        arr[j] = this.data_item_2048[j][i]['number']
+                    }
+                    let arr1 = new move_2048(arr, true).moveDown()
+                    for (let j = 0; j < 4; j++) {
+                        this.data_item_2048[j][i] = new Item_2048(arr1[j])
+                    }
+                    this.getScore(arr1[4])
+                    console.log('score', arr1[4])
+                }
+
+                this.create2Or4()
+            },
+            key_right_2048() {
+                // 从包含对象的数组里取出数字，交给2048move处理，然后返回赋值
+                console.log('right')
+                for (let i = 0; i < 4; i++) {
+                    let arr = new Array(4)
+                    for (let j = 0; j < 4; j++) {
+                        arr[j] = this.data_item_2048[i][j]['number']
+                    }
+                    let arr1 = new move_2048(arr, true).moveDown()
+                    for (let j = 0; j < 4; j++) {
+                        this.data_item_2048[i][j] = new Item_2048(arr1[j])
+                    }
+                    this.getScore(arr1[4])
+                    console.log('score', arr1[4])
+                }
+                this.create2Or4()
+            },
+            key_left_2048() {
+                console.log('left')
+                for (let i = 0; i < 4; i++) {
+                    let arr = new Array(4)
+                    for (let j = 0; j < 4; j++) {
+                        arr[j] = this.data_item_2048[i][j]['number']
+                    }
+                    let arr1 = new move_2048(arr, false).moveDown()
+                    for (let j = 0; j < 4; j++) {
+                        this.data_item_2048[i][j] = new Item_2048(arr1[j])
+                    }
+                    this.getScore(arr1[4])
+                    console.log('score', arr1[4])
+                }
+
+                this.create2Or4()
+            },
+        },
+        mounted() {
+            this.initData()
+        },
+        watch: {
+            data_item_2048: function(value) {
+                console.log(JSON.stringify(value))
+                localStorage.setItem('data_item_2048', JSON.stringify(value))
+            },
+            score: function(value) {
+                console.log(value)
+                localStorage.setItem('score', JSON.stringify(value))
+            }
+        }
+    })
+</script>
+
+</html>
