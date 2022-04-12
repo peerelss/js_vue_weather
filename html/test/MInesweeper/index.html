@@ -8,14 +8,14 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>扫雷小游戏</title>
+    <title>使用javascript实现一个扫雷小游戏，js混合vue实现</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
     <script src="mine_sweeper.js"></script>
+    <link rel="stylesheet" href="sweeper.css">
 </head>
 
 <body>
@@ -24,14 +24,119 @@
     <![endif]-->
     <div id="app">
         <h1>扫雷小游戏</h1>
-        <h2>{{time}}</h2>
+        <h2>{{time}} 🚩 💣 </h2>
+        <button v-on:click="initData" class="btn"> 初始化游戏</button>
+        <div id="sweeper">
+            <ul v-for="(items,index) in data_sweepers">
+                <div class="text_2048" @click="handleClick(index,index2)" v-for="(item,index2) in items">
+                    <div v-bind:class="{'cover':  item.isFlag}"> {{item.number}}</div>
+                </div>
+            </ul>
+        </div>
     </div>
     <script>
         var app = new Vue({
             el: '#app',
             data: {
-                time: '99:00'
-            }
+                time: '99:00',
+                data_sweepers: []
+            },
+            methods: {
+                handleClick(index, index2) {
+                    this.data_sweepers[index][index2].isFlag = true
+                    this.data_sweepers.push()
+                },
+
+
+                initData() {
+                    // 初始化数据，首先创建空列表，然后随机创建10个地雷，然后计算每一个格子的数字
+                    this.data_sweepers = []
+                    for (let i = 0; i < 10; i++) {
+                        let i_array = []
+                        for (let j = 0; j < 10; j++) {
+                            i_array.push(new Item_Mines(false))
+                        }
+                        this.data_sweepers.push(i_array)
+                    }
+                    let randonMines = createRandomMines();
+                    for (let i = 0; i < randonMines.length; i++) {
+                        let j = parseInt(randonMines[i] / 9),
+                            k = randonMines[i] % 9
+                        console.log(j, k)
+                        this.data_sweepers[j][k].isMine = true //标记为地雷
+                        this.data_sweepers[j][k].number = 9
+                        if (j == 0) {
+                            if (k == 0) {
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j][k + 1].number += 1
+                                this.data_sweepers[j + 1][k + 1].number += 1
+                            } else if (k > 0 && k < 8) {
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j][k + 1].number += 1
+                                this.data_sweepers[j + 1][k + 1].number += 1
+                                this.data_sweepers[j][k - 1].number += 1
+                                this.data_sweepers[j + 1][k - 1].number += 1
+                            } else {
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j][k - 1].number += 1
+                                this.data_sweepers[j + 1][k - 1].number += 1
+                            }
+                        } else if (j > 0 && j < 8) {
+                            if (k == 0) {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j - 1][k + 1].number += 1
+
+
+                                this.data_sweepers[j][k + 1].number += 1
+
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j + 1][k + 1].number += 1
+                            } else if (k > 0 && k < 8) {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j - 1][k - 1].number += 1
+                                this.data_sweepers[j - 1][k + 1].number += 1
+
+
+                                this.data_sweepers[j][k + 1].number += 1
+                                this.data_sweepers[j][k - 1].number += 1
+
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j + 1][k - 1].number += 1
+                            } else {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j - 1][k - 1].number += 1
+
+
+                                this.data_sweepers[j][k - 1].number += 1
+
+                                this.data_sweepers[j + 1][k].number += 1
+                                this.data_sweepers[j + 1][k - 1].number += 1
+                            }
+                        } else {
+                            if (k == 0) {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j][k + 1].number += 1
+                                this.data_sweepers[j - 1][k + 1].number += 1
+                            } else if (k > 0 && k < 8) {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j][k + 1].number += 1
+                                this.data_sweepers[j - 1][k + 1].number += 1
+                                this.data_sweepers[j][k - 1].number += 1
+                                this.data_sweepers[j - 1][k - 1].number += 1
+                            } else {
+                                this.data_sweepers[j - 1][k].number += 1
+                                this.data_sweepers[j][k - 1].number += 1
+                                this.data_sweepers[j - 1][k - 1].number += 1
+                            }
+                        }
+                    }
+                    for (let i = 0; i < randonMines.length; i++) {
+                        let j = parseInt(randonMines[i] / 9),
+                            k = randonMines[i] % 9
+                        this.data_sweepers[j][k].number = '💣'
+                    }
+                },
+            },
         })
     </script>
 </body>

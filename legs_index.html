@@ -6,89 +6,162 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>{{tumblr_text}}</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="" />
     <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/nanoid/nanoid.js"></script>
     <script src="tumblr.js"></script>
-    <link rel="stylesheet" type="text/css" href="js_vue_tumblr.css">
+    <link rel="stylesheet" type="text/css" href="js_vue_tumblr.css" />
 </head>
 
 <body>
     <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
     <![endif]-->
     <div id="app">
         <div id="control">
-            <button v-on:click='nextPageNo' class='btn' type="button ">下一页 {{page_no}}</button> <br>
-
-            <button v-on:click='prePage' class='btn' type="button ">上一页 {{page_no}}</button><br>
-            <button v-on:click='cleanPage' class='btn' type="button ">清除数据 {{page_no}}</button>
+            <input v-model="av_star" placeholder="松下紗栄子 " /><br />
+            <input v-model="av_maker" placeholder="厂商姓名" /><br />
+            <button v-on:click="nextPageNo" class="btn" type="button ">
+          下一页 {{page_no}}
+        </button>
+            <br />
+            <button v-on:click="prePage" class="btn" type="button ">
+          上一页 {{page_no}}</button
+        ><br />
+        <button v-on:click="cleanPage" class="btn" type="button ">
+          清除数据 {{page_no}}</button
+        ><br />
+        <button v-on:click="getLuxuList" class="btn" type="button ">
+          获取luxu列表 {{page_no}}
+        </button>
+            <br />
+            <button v-on:click="getAvByStar" class="btn" type="button ">
+          获取女优列表 {{page_no}}
+        </button>
+            <br />
+            <button v-on:click="getAvByMake" class="btn" type="button ">
+          获取工厂列表 {{page_no}}
+        </button>
+            <br />
         </div>
 
-        <br>
+        <br />
         <div class="image_leg" v-for="(image) in images_l">
-            <a :href="image.jpg">
-                <img :title='image.jpg' :src='image.jpg' alt="HTML tutorial" :key='image.number'></a>
+            <a :href="image.av_jpg">
+                <img :title="image.av_jpg" :src="image.av_jpg" alt="HTML tutorial" :key="image.av_id" /></a>
         </div>
-
     </div>
     <script>
         class Legs_Image {
             constructor(index) {
-                this.jpg = "https://legsworld.net/UpdatesNew/Previews-1212x1644/" + index + ".jpg"
-                this.number = index
+                this.av_jpg =
+                    "https://legsworld.net/UpdatesNew/Previews-1212x1644/" +
+                    index +
+                    ".jpg";
+                this.av_id = index;
             }
         }
         let data = {
-            page_no: 0, //页码
-            images_l: []
-        }
-        Vue.config.devtools = true
+            page_no: 1, //页码
+            images_l: [],
+            av_star: "松下紗栄子",
+            av_maker: "",
+        };
+        Vue.config.devtools = true;
         var app = new Vue({
-            el: '#app',
+            el: "#app",
             data,
-
             methods: {
                 cleanPage: function() {
-                    this.images_l.splice(0, 30)
+                    this.images_l.splice(0, 30);
+                    this.page_no += 1;
+                    axios
+                        .get("http://127.0.0.1:5000/luxu/20/" + this.page_no)
+                        .then((response) => {
+                            this.images_l = response.data;
+                        });
+                },
+                getAvByStar: function() {
+                    this.images_l.splice(0, 30);
+                    this.page_no += 1;
+                    axios
+                        .get(
+                            "http://127.0.0.1:5000/javbus/" +
+                            this.av_star +
+                            "/20/" +
+                            this.page_no
+                        )
+                        .then((response) => {
+                            this.images_l = response.data;
+                        });
+                },
+                getAvByMake: function() {
+                    this.images_l.splice(0, 30);
+                    this.page_no += 1;
+                    axios
+                        .get("http://127.0.0.1:5000/luxu/20/" + this.page_no)
+                        .then((response) => {
+                            this.images_l = response.data;
+                        });
+                },
+
+                getLuxuList: function() {
+                    this.images_l.splice(0, 30);
+                    this.page_no += 1;
+                    axios
+                        .get("http://127.0.0.1:5000/luxu/20/" + this.page_no)
+                        .then((response) => {
+                            this.images_l = response.data;
+                        });
                 },
                 prePage: function() {
-                    this.images_l.splice(0, 30)
-                    for (let i = 6622 - this.page_no * 30; i > 6622 - this.page_no * 30 - 30; i--) {
-                        this.images_l.push(new Legs_Image(i))
+                    this.images_l.splice(0, 30);
+                    for (
+                        let i = 6722 - this.page_no * 30; i > 6722 - this.page_no * 30 - 30; i--
+                    ) {
+                        this.images_l.push(new Legs_Image(i));
                     }
-                    this.page_no = this.page_no + 1
-                    console.log(this.images_l)
+                    this.page_no = this.page_no + 1;
+                    console.log(this.images_l);
                 },
                 nextPageNo: function() {
-                    this.images_l.splice(0, 30)
-                    for (let i = 6622 - this.page_no * 30; i > 6622 - this.page_no * 30 - 30; i--) {
-                        this.images_l.push(new Legs_Image(i))
+                    this.images_l.splice(0, 30);
+                    for (
+                        let i = 6722 - this.page_no * 30; i > 6722 - this.page_no * 30 - 30; i--
+                    ) {
+                        this.images_l.push(new Legs_Image(i));
                     }
-                    this.page_no = this.page_no + 1
-                    console.log(this.images_l)
+                    this.page_no = this.page_no + 1;
+                    console.log(this.images_l);
                 },
                 updateImageList: function(event) {
-                    if (this.tumblr_text === 'legsworld') {
-                        console.log('legsworld')
+                    if (this.tumblr_text === "legsworld") {
+                        console.log("legsworld");
                     } else {
                         axios
-                            .get('http://127.0.0.1:5000/tumblr/' + this.tumblr_text + '/' + this.page_nu)
-                            .then(response => (this.images_l = response.data))
+                            .get(
+                                "http://127.0.0.1:5000/tumblr/" +
+                                this.tumblr_text +
+                                "/" +
+                                this.page_no
+                            )
+                            .then((response) => (this.images_l = response.data));
                     }
                 },
                 mounted: function() {
-                    console.log(' mounted')
-                }
-
+                    console.log(" mounted");
+                },
             },
-        })
+        });
     </script>
 </body>
 

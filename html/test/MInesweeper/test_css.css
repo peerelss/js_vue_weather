@@ -1,0 +1,17 @@
+p {
+    background-color: gray;
+    padding: 20px;
+}
+
+#box {
+    width: 70px;
+    height: 70px;
+    margin: 10px;
+    padding: 5px;
+    background-color: aqua;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
