@@ -74,7 +74,7 @@
             page_no: 1, //页码
             images_l: [],
             av_star: "松下紗栄子",
-            av_maker: "",
+            av_maker: "アタッカーズ",
         };
         Vue.config.devtools = true;
         var app = new Vue({
@@ -92,7 +92,6 @@
                 },
                 getAvByStar: function() {
                     this.images_l.splice(0, 30);
-                    this.page_no += 1;
                     axios
                         .get(
                             "http://127.0.0.1:5000/javbus/" +
@@ -103,15 +102,21 @@
                         .then((response) => {
                             this.images_l = response.data;
                         });
+                    this.page_no += 1;
                 },
                 getAvByMake: function() {
                     this.images_l.splice(0, 30);
-                    this.page_no += 1;
                     axios
-                        .get("http://127.0.0.1:5000/luxu/20/" + this.page_no)
+                        .get(
+                            "http://127.0.0.1:5000/jav/" +
+                            this.av_maker +
+                            "/21/" +
+                            this.page_no
+                        )
                         .then((response) => {
                             this.images_l = response.data;
                         });
+                    this.page_no += 1;
                 },
 
                 getLuxuList: function() {
